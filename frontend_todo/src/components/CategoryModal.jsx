@@ -5,15 +5,17 @@ import { createCategory } from "../fetch/crudCategoriesFunction";
 import Compact from "@uiw/react-color-compact";
 
 export default function CategoryModal({ change }) {
+
   const [newCategory, setNewCategory] = useState("");
   const [hex, setHex] = useState("#fff");
-  console.log(hex);
+  
   const handleCreateCategory = async () => {
     if (!newCategory.trim()) return; // Don't create empty todos
     const newCat = {
       name: newCategory,
       colour:hex
     };
+    
     const createdCategory = await createCategory(newCat);
     console.log("Created todo is", createdCategory);
 

@@ -1,7 +1,6 @@
 import React from "react";
 
-export default function Span({ name, id, onClick, colour }) {
-  let color = colour ? `bg-[${colour}]` : "bg-red-500";
+export default function Span({ name, colour }) {
   const inlineStyle = {
     backgroundColor: colour,
   };
