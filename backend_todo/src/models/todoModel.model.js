@@ -1,18 +1,37 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-// Define Todo schema
 const todoSchema = new mongoose.Schema({
-  //user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  title: { type: String, required: true },
-  description: { type: String },
-  dueDate: { type: Date },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category',required:true },
-  completed: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: {
+    type: String,
+    trim: true
+  },
+  completed: {
+    type: Boolean,
+    default: false
+  },
+  dueDate: {
+    type: Date
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date
+  }
 });
 
-// Define Todo model
-const Todo = mongoose.model("Todo", todoSchema);
+// Middleware to update `updatedAt` before saving a document
+todoSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
+});
 
-module.exports = { Todo };
+const Todo = mongoose.model('Todo', todoSchema);
+
+module.exports = Todo;

@@ -1,91 +1,99 @@
-//Models
-const { Todo } = require("../../models/todoModel.model");
+const Todo = require('../../models/todoModel.model'); // Assuming the Todo model is exported from this path
 
-async function getTodos(req, res) {
+// Create a new todo
+const createTodo = async (req, res) => {
   try {
-    const todos = await Todo.find().populate("category").sort({
-      createdAt: -1,
+    const todo = new Todo({
+      title: req.body.title,
+      description: req.body.description,
+      dueDate: req.body.dueDate
     });
-    res.json(todos);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    const savedTodo = await todo.save();
+    res.status(201).json(savedTodo);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-}
+};
 
-async function postTodos(req, res) {
-  let { title, description, dueDate, category } = req.body;
-  dueDate = new Date(dueDate);
+// Get all todos
+const getTodos = async (req, res) => {
   try {
-    const newTodo = new Todo({
-      //  user: req.user.id,
-      title,
-      description,
-      dueDate,
-      category,
-    });
-
-    const todo = await newTodo.save();
-    res.status(201).json(todo);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Internal Server Error");
+    const todos = await Todo.find();
+    res.status(200).json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-}
+};
 
-async function updatedTodo(req, res) {
-  const { title, description, dueDate, completed } = req.body;
-
+// Get a todo by ID
+const getTodoById = async (req, res) => {
   try {
-    let todo = await Todo.findById(req.params.id);
-
+    const todo = await Todo.findById(req.params.id);
     if (!todo) {
-      return res.status(404).json({ msg: "Todo not found" });
+      return res.status(404).json({ message: 'Todo not found' });
     }
+    res.status(200).json(todo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    // // Ensure user owns the todo
-    // if (todo.user.toString() !== req.user.id) {
-    //   return res.status(401).json({ msg: "Not authorized" });
-    // }
-
-    todo = await Todo.findByIdAndUpdate(
+// Update a todo by ID
+const updateTodo = async (req, res) => {
+  try {
+    const updatedTodo = await Todo.findByIdAndUpdate(
       req.params.id,
-      { title, description, dueDate, completed },
-      { new: true }
+      {
+        title: req.body.title,
+        description: req.body.description,
+        completed: req.body.completed,
+        dueDate: req.body.dueDate
+      },
+      { new: true, runValidators: true }
     );
-
-    res.status(201).json(todo);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
-  }
-}
-
-async function deleteTodo(req, res) {
-  try {
-    let todo = await Todo.findById(req.params.id);
-
-    if (!todo) {
-      return res.status(404).json({ msg: "Todo not found" });
+    if (!updatedTodo) {
+      return res.status(404).json({ message: 'Todo not found' });
     }
-
-    // // Ensure user owns the todo
-    // if (todo.user.toString() !== req.user.id) {
-    //   return res.status(401).json({ msg: "Notorized" });
-    // }
-
-    await Todo.findByIdAndDelete(req.params.id);
-
-    res.json({ msg: "Todo removed" });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server Error");
+    res.status(200).json(updatedTodo);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-}
+};
+
+// Delete a todo by ID
+const deleteTodo = async (req, res) => {
+  try {
+    const deletedTodo = await Todo.findByIdAndDelete(req.params.id);
+    if (!deletedTodo) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+    res.status(200).json({ message: 'Todo deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Search todos by title or description (case-insensitive)
+const searchTodos = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const todos = await Todo.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } }
+      ]
+    });
+    res.status(200).json(todos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 module.exports = {
+  createTodo,
   getTodos,
-  postTodos,
-  updatedTodo,
+  getTodoById,
+  updateTodo,
   deleteTodo,
+  searchTodos
 };
