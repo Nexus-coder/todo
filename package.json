@@ -11,6 +11,7 @@
     "frontend": "npm run dev --prefix frontend_todo",
     "backend-deploy":"npm run start --prefix backend_todo",
     "deploy":"npm run build --prefix frontend_todo && npm run backend-deploy",
+    "deploy-cluster":"npm run build --prefix frontend_todo && npm run backend-deploy",
     "watch": "npm run backend & npm run frontend",
     "test": "npm run test --prefix backend_todo && npm run test --prefix frontend_todo"
   },

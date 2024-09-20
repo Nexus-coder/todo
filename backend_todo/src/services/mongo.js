@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
-// const mongoURI = `mongodb://127.0.0.1:27017/Todo`;
-const mongoURI = `mongodb+srv://kimani:Pu3hEMLprgPJjlLj@cluster0.hbs3wtk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const mongoURI = `mongodb://127.0.0.1:27017/Todo`;
+// const mongoURI = `mongodb+srv://kimani:Pu3hEMLprgPJjlLj@cluster0.hbs3wtk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 mongoose.connection.once("on", () => {
   console.log("MongoDB server coonection opened");
