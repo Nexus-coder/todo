@@ -9,11 +9,11 @@ const {
   searchTodos
 } = require('./todos.controllers'); // Make sure the path is correct for your controller file
 
-// Route to create a new todo
-router.post('/', createTodo);
-
 // Route to get all todos
 router.get('/', getTodos);
+
+// Route to create a new todo
+router.post('/', createTodo);
 
 // Route to get a single todo by ID
 router.get('/:id', getTodoById);

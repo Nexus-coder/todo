@@ -18,7 +18,7 @@ const createTodo = async (req, res) => {
 // Get all todos
 const getTodos = async (req, res) => {
   try {
-    const todos = await Todo.find();
+    const todos = await Todo.find({});
     res.status(200).json(todos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -40,20 +40,22 @@ const getTodoById = async (req, res) => {
 
 // Update a todo by ID
 const updateTodo = async (req, res) => {
+  console.log(req.body.title, req.body.description)
   try {
     const updatedTodo = await Todo.findByIdAndUpdate(
       req.params.id,
       {
         title: req.body.title,
         description: req.body.description,
-        completed: req.body.completed,
-        dueDate: req.body.dueDate
+        // completed: req.body.completed ,
+        // dueDate: req.body.dueDate
       },
       { new: true, runValidators: true }
     );
     if (!updatedTodo) {
       return res.status(404).json({ message: 'Todo not found' });
     }
+    console.log('Updated Todo', updatedTodo)
     res.status(200).json(updatedTodo);
   } catch (error) {
     res.status(400).json({ error: error.message });
